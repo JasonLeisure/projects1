@@ -36,10 +36,10 @@ def api_list_presentations(request, conference_id):
     return JsonResponse({"presentations": presentations})
 
 
-def api_show_presentation(request, id):
+def api_show_presentation(request, pk):
     """
     Returns the details for the Presentation model specified
-    by the id parameter.
+    by the pk parameter.
 
     This should return a dictionary with the presenter's name,
     their company name, the presenter's email, the title of
@@ -61,4 +61,20 @@ def api_show_presentation(request, id):
         }
     }
     """
-    return JsonResponse({})
+    presentation = Presentation.objects.get(id=pk)
+
+    return JsonResponse(
+        {
+            "presenter_name": presentation.presenter_name,
+            "company_name": presentation.company_name,
+            "presenter_email": presentation.presenter_email,
+            "title": presentation.title,
+            "synopsis": presentation.synopsis,
+            "created": presentation.created,
+            "status": presentation.status,
+            "conference": {
+                "name": presentation.conference.name,
+                "href": presentation.conference.get_api_url(),
+            },
+        }
+    )

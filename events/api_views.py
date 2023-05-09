@@ -34,10 +34,10 @@ def api_list_conferences(request):
     return JsonResponse({"conferences": response})
 
 
-def api_show_conference(request, id):
+def api_show_conference(request, pk):
     """
     Returns the details for the Conference model specified
-    by the id parameter.
+    by the pk parameter.
 
     This should return a dictionary with the name, starts,
     ends, description, created, updated, max_presentations,
@@ -59,7 +59,7 @@ def api_show_conference(request, id):
         }
     }
     """
-    conference = Conference.objects.get(id=id)
+    conference = Conference.objects.get(id=pk)
     return JsonResponse(
         {
             "name": conference.name,
@@ -97,13 +97,22 @@ def api_list_locations(request):
         ]
     }
     """
-    return JsonResponse({})
+    response = []
+    locations = Location.objects.all()
+    for location in locations:
+        response.append(
+            {
+                "name": location.name,
+                "href": location.get_api_url(),
+            }
+        )
+    return JsonResponse({"locations": response})
 
 
-def api_show_location(request, id):
+def api_show_location(request, pk):
     """
     Returns the details for the Location model specified
-    by the id parameter.
+    by the pk parameter.
 
     This should return a dictionary with the name, city,
     room count, created, updated, and state abbreviation.
@@ -117,4 +126,29 @@ def api_show_location(request, id):
         "state": the two-letter abbreviation for the state,
     }
     """
-    return JsonResponse({})
+
+    # name = models.CharField(max_length=200)
+    # city = models.CharField(max_length=200)
+    # room_count = models.PositiveSmallIntegerField()
+    # created = models.DateTimeField(auto_now_add=True)
+    # updated = models.DateTimeField(auto_now=True)
+
+    # state = models.ForeignKey(
+    #     State,
+    #     related_name="+",  # do not create a related name on State
+    #     on_delete=models.PROTECT,
+    # )
+    location = Location.objects.get(id=pk)
+    return JsonResponse(
+        {
+            "name": location.name,
+            "city": location.city,
+            "room_count": location.room_count,
+            "created": location.created,
+            "updated": location.updated,
+            "state": {
+                "name": location.state.name,
+                "abbreviation": location.state.abbreviation,
+            },
+        }
+    )

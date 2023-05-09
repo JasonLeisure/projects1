@@ -10,7 +10,7 @@ urlpatterns = [
         name="api_list_presentations",
     ),
     path(
-        "presentations/<int:id>/",
+        "presentations/<int:pk>/",
         api_show_presentation,
         name="api_show_presentation",
     ),
